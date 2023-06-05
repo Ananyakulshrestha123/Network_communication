@@ -1,0 +1,27 @@
+import csv
+
+# Sample array
+my_array = [1, 2, 3, 4, 5]
+
+# Determine the number of columns you want to split the array into
+num_columns = 3
+
+# Calculate the number of rows needed
+num_rows = -(-len(my_array) // num_columns)  # Round up division
+
+# Pad the array with None values if needed
+padding = num_rows * num_columns - len(my_array)
+my_array += [None] * padding
+
+# Split the array into columns
+columns = [my_array[i:i+num_rows] for i in range(0, len(my_array), num_rows)]
+
+# Transpose the columns to rows
+rows = zip(*columns)
+
+# Open the CSV file in write mode
+with open('output.csv', 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+
+    # Write the rows
+    writer.writerows(rows)
