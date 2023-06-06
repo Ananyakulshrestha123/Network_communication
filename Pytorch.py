@@ -166,3 +166,37 @@ calibrated_models = calibrate(model, cal_dataloader)
 confidence = test(model, calibrated_models, test_dataloader)
 
 print(confidence)
+
+
+
+
+
+
+calibrate(model, dataloader):
+
+# This function performs calibration of the trained model.
+# It takes the trained model and a dataloader as input for the calibration data.
+# The function sets the model to evaluation mode (model.eval()) and initializes empty lists for storing embeddings and targets.
+# It then iterates over the calibration dataloader and computes embeddings for each input sample, storing them along with their respective targets.
+# After processing all calibration samples, the embeddings and targets are concatenated into tensors.
+# The prototypes for each class are calculated by taking the mean of the class embeddings.
+# The distances between the embeddings and prototypes are computed and normalized by dividing by the standard deviation of the distances.
+# Calibrated models are constructed for each class by fitting a Gaussian kernel density estimator (KernelDensity) to the normalized distances.
+# The calibrated models are returned as a list.
+# test(model, calibrated_models, dataloader):
+
+# This function tests the calibrated model on the test data.
+# It takes the model, calibrated_models (list of calibrated models), and a dataloader for the test data as inputs.
+# Similar to the calibration step, the function sets the model to evaluation mode, computes embeddings for the test data, and stores them along with their targets.
+# The logits (distances) between the embeddings and prototypes are calculated.
+# The distances are normalized by dividing by the standard deviation of the distances.
+# P-values are computed by subtracting the scores obtained from the calibrated models for each class.
+# Confidence scores are calculated as 1 minus the p-values.
+# The confidence scores are returned as a tensor.
+# Dataset preparation and data splitting:
+
+# The code loads and preprocesses a time series dataset from a CSV file.
+# The input features (X) are extracted by dropping the 'Trades' column, and the corresponding labels (y) are extracted.
+# The dataset is split into three parts: training (first 800 samples), calibration (800-1000 samples), and testing (from the 1000th sample onwards).
+# Datasets and dataloaders are created for training, calibration, and testing.
+# Model initialization, training, and
