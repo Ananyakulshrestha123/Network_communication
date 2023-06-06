@@ -1,0 +1,38 @@
+def train(model, dataloader, Nepisodes, Nquery):
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    criterion = nn.CrossEntropyLoss()
+
+    for episode in range(1, Nepisodes+1):
+        model.train()
+        optimizer.zero_grad()
+
+        support_examples = []
+        for class_label in torch.unique(ytrain):
+            class_examples = Xtrain[ytrain == class_label]
+            support_indices = torch.randperm(class_examples.shape[0])[:S]
+            support_examples.append(class_examples[support_indices])
+
+        support_examples = torch.stack(support_examples)
+        prototypes = torch.mean(model(support_examples), dim=1)
+
+        for x, y in dataloader:
+            embeddings = model(x)
+            logits = -torch.cdist(embeddings, prototypes, p=2)
+            class_probs = nn.functional.softmax(logits, dim=1)
+
+            loss = criterion(logits, y)
+            loss.backward()
+            optimizer.step()
+
+        # Additional code for query examples
+        query_examples = []
+        for class_label in torch.unique(ytrain):
+            class_examples = Xtrain[ytrain == class_label]
+            query_indices = torch.randperm(class_examples.shape[0])[:Nquery]
+            query_examples.append(class_examples[query_indices])
+
+        query_examples = torch.stack(query_examples)
+        query_embeddings = model(query_examples)
+        # Use query_embeddings for further processing or analysis
+
+    return model
