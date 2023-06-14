@@ -1,0 +1,14 @@
+import pandas as pd
+import numpy as np
+
+# Read the CSV file
+df = pd.read_csv('E:\PPT Reader\http_complex_analysis.csv')  # Replace with the actual path to your CSV file
+
+# Generate random values of 0 and 1
+random_values = np.random.randint(0, 2, size=len(df))
+
+# Add the random values as a new column
+df['Labels'] = random_values
+
+# Save the updated DataFrame to a new CSV file
+df.to_csv('E:\http_new_comx_analysis.csv', index=False)  # Replace with the desired path for the updated CSV file
