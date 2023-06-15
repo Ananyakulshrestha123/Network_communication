@@ -1,0 +1,26 @@
+import dpkt
+
+def check_pcap_header(pcap_file):
+    with open(pcap_file, 'rb') as f:
+        pcap = dpkt.pcap.Reader(f)
+        
+        for ts, buf in pcap:
+            try:
+                eth = dpkt.ethernet.Ethernet(buf)
+                
+                # Check if the packet has an Ethernet header
+                if isinstance(eth.data, dpkt.ethernet.Ethernet):
+                    print("Ethernet header found")
+                else:
+                    print("Raw data packet found")
+                
+            except dpkt.dpkt.NeedData:
+                print("Unable to parse packet")
+            except dpkt.dpkt.UnpackError:
+                print("Unable to unpack packet")
+
+# Provide the path to your pcap file
+pcap_file = 'path/to/your/pcap/file.pcap'
+
+# Call the function to check the pcap file
+check_pcap_header(pcap_file)
